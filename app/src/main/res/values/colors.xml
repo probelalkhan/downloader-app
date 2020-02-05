@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="bg_recycler_view_layout">#e4e4e4</color>
+    <color name="colorDefaultText">#4f4f4f</color>
+    <color name="colorTitleText">#1e1e1e</color>
+    <color name="colorLine">#C2C2C2</color>
+</resources>

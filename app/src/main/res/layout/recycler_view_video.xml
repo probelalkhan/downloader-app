@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="video"
+            type="net.simplifiedcoding.data.models.VideoContent" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_recycler_view_layout"
+        android:padding="@dimen/default_margin">
+
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/image_view_thumb"
+            android:layout_width="135dp"
+            android:layout_height="115dp"
+            app:image="@{video.thumb}"
+            tools:background="@drawable/ic_thumb" />
+
+        <TextView
+            android:id="@+id/text_view_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_toStartOf="@id/image_button_download"
+            android:layout_toEndOf="@id/image_view_thumb"
+            android:fontFamily="sans-serif-medium"
+            android:maxLines="1"
+            android:text="@{video.title}"
+            android:textColor="@color/colorTitleText"
+            android:textSize="16sp"
+            tools:text="Normal Video" />
+
+        <TextView
+            android:id="@+id/text_view_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_title"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_toStartOf="@id/image_button_download"
+            android:layout_toEndOf="@id/image_view_thumb"
+            android:maxLines="3"
+            android:text="@{video.description}"
+            android:textColor="@color/colorDefaultText"
+            android:textSize="14sp"
+            tools:text="When one sunny day three rodents rudely harass him, something snaps" />
+
+        <ImageButton
+            android:id="@+id/image_button_download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@{video.downloading ? @drawable/ic_cross :@drawable/ic_download}" />
+
+        <LinearLayout
+            android:id="@+id/layout_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_desc"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginTop="@dimen/default_margin"
+            android:layout_toEndOf="@id/image_view_thumb"
+            android:orientation="vertical"
+            android:visibility="@{video.downloading ? View.VISIBLE : View.INVISIBLE}">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="@{video.progress}"
+                tools:progress="45" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{video.progress == 100 ? `Completed` :video.progress+`%`}"
+                android:textColor="@color/colorDefaultText"
+                android:textSize="12sp"
+                tools:text="45%" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/layout_progress"
+            android:layout_marginTop="@dimen/default_margin"
+            android:background="@color/colorLine" />
+
+    </RelativeLayout>
+</layout>
