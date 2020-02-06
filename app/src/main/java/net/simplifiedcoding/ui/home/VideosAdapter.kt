@@ -10,7 +10,7 @@ import net.simplifiedcoding.databinding.RecyclerViewVideoBinding
 
 class VideosAdapter : RecyclerView.Adapter<VideosAdapter.VideoViewHolder>() {
 
-    private var videos = listOf<VideoContent>()
+    private var videos = mutableListOf<VideoContent>()
     var listener: RecyclerViewButtonClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = VideoViewHolder(
@@ -25,16 +25,22 @@ class VideosAdapter : RecyclerView.Adapter<VideosAdapter.VideoViewHolder>() {
     override fun getItemCount() = videos.size
 
     override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
+        videos[position].position = position
         holder.binding.video = videos[position]
         holder.binding.imageButtonDownload.setOnClickListener {
-            listener?.onRecyclerViewItemClick(holder.binding, videos[position])
+            listener?.onRecyclerViewItemClick(it, videos[position])
         }
         holder.binding.executePendingBindings()
     }
 
     fun setVideos(videos: List<VideoContent>) {
-        this.videos = videos
+        this.videos = videos as MutableList<VideoContent>
         notifyDataSetChanged()
+    }
+
+    fun setVideo(video: VideoContent) {
+        videos[video.position] = video
+        notifyItemChanged(video.position)
     }
 
 

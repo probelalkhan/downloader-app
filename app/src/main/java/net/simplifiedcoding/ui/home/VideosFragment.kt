@@ -1,21 +1,22 @@
 package net.simplifiedcoding.ui.home
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.ResultReceiver
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
 import kotlinx.android.synthetic.main.fragment_videos.*
 import kotlinx.coroutines.launch
 import net.simplifiedcoding.R
 import net.simplifiedcoding.data.models.VideoContent
-import net.simplifiedcoding.databinding.RecyclerViewVideoBinding
 import net.simplifiedcoding.ui.base.BaseFragment
-import net.simplifiedcoding.ui.utils.getRootDirPath
 import org.kodein.di.generic.instance
+
 
 class VideosFragment : BaseFragment(), RecyclerViewButtonClickListener {
 
@@ -48,55 +49,36 @@ class VideosFragment : BaseFragment(), RecyclerViewButtonClickListener {
         viewModel.fetchAllVideos()
     }
 
-    override fun onRecyclerViewItemClick(binding: RecyclerViewVideoBinding, video: VideoContent) {
+    override fun onRecyclerViewItemClick(view: View, video: VideoContent) {
         if (!video.isDownloading) {
-            downloadVideo(binding, video, getRootDirPath(requireContext()))
+            downloadVideo(video)
         } else {
             PRDownloader.cancel(video.downloadID)
             video.isDownloading = false
-            binding.video = video
-            binding.executePendingBindings()
+            videosAdapter.notifyItemChanged(video.position)
         }
     }
 
-    private fun getFileName(url: String): String =
-        url.substring(url.lastIndexOf("/") + 1, url.length)
-
-    private fun downloadVideo(
-        binding: RecyclerViewVideoBinding,
-        videoContent: VideoContent,
-        dirPath: String
-    ) {
-        if (videoContent.sources.isNotEmpty()) {
-            videoContent.isDownloading = true
-            val fileName = getFileName(videoContent.sources[0])
-            videoContent.downloadID =
-                PRDownloader.download(videoContent.sources[0], dirPath, fileName)
-                    .build()
-                    .setOnStartOrResumeListener { }
-                    .setOnPauseListener { }
-                    .setOnCancelListener { }
-                    .setOnProgressListener {
-                        videoContent.progress = (it.currentBytes * 100 / it.totalBytes).toInt()
-                        updateRecyclerViewItemUI(binding, videoContent)
-                    }
-                    .start(object : OnDownloadListener {
-                        override fun onDownloadComplete() {
-                            videoContent.isDownloaded = true
-                            updateRecyclerViewItemUI(binding, videoContent)
-                        }
-
-                        override fun onError(error: com.downloader.Error?) {}
-                    })
-            updateRecyclerViewItemUI(binding, videoContent)
+    private fun downloadVideo(video: VideoContent) {
+        Intent(requireContext(), DownloadService::class.java).also {
+            it.putExtra(KEY_VIDEO, video)
+            it.putExtra(KEY_RECEIVER, DownloadReceiver(Handler()))
+            requireContext().startService(it)
         }
     }
 
-    private fun updateRecyclerViewItemUI(
-        binding: RecyclerViewVideoBinding,
-        videoContent: VideoContent
-    ) {
-        binding.video = videoContent
-        binding.executePendingBindings()
+    inner class DownloadReceiver(handler: Handler?) : ResultReceiver(handler) {
+        override fun onReceiveResult(resultCode: Int, resultData: Bundle) {
+            super.onReceiveResult(resultCode, resultData)
+            if (resultCode == DownloadService.UPDATE_PROGRESS) {
+                val video = resultData.getSerializable(KEY_VIDEO) as VideoContent
+                videosAdapter.setVideo(video)
+            }
+        }
+    }
+
+    companion object {
+        const val KEY_VIDEO = "key_video"
+        const val KEY_RECEIVER = "key_receiver"
     }
 }

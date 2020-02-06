@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:background="@{video.downloading ? @drawable/ic_cross :@drawable/ic_download}" />
+            android:background="@{video.downloading ? @drawable/ic_cross : @drawable/ic_download}" />
 
         <LinearLayout
             android:id="@+id/layout_progress"

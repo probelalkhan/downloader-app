@@ -25,6 +25,8 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".ui.home.DownloadService" />
+
     </application>
 
 </manifest>
