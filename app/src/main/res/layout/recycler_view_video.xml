@@ -71,7 +71,7 @@
             android:layout_marginTop="@dimen/default_margin"
             android:layout_toEndOf="@id/image_view_thumb"
             android:orientation="vertical"
-            android:visibility="@{video.downloading ? View.VISIBLE : View.INVISIBLE}">
+            android:visibility="@{video.downloading || video.downloaded ? View.VISIBLE : View.INVISIBLE}">
 
             <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"

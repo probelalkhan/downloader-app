@@ -21,5 +21,4 @@ class VideosViewModel(
         _videos.value = repository.getAllVideos()
     }
 
-
 }

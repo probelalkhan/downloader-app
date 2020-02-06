@@ -8,5 +8,6 @@ data class VideoContent(
     val title: String,
     var downloadID: Int,
     var progress: Int = 0,
-    var isDownloading: Boolean = false
+    var isDownloading: Boolean = false,
+    var isDownloaded: Boolean = false
 )
